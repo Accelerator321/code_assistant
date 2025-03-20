@@ -21,9 +21,11 @@ backup_file = "backup.json"
 
 
 if __name__ =="__main__":
+    refresh_backup(backup_file, workspace)
+    process_folder(workspace)
     while(True):
-        refresh_backup(backup_file, workspace)
-        process_folder(workspace)
+        
+        
         query = input("Please Enter your Query\n")
 
 

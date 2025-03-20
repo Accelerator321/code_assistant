@@ -36,9 +36,9 @@ file_modification_tool = Tool(
                 {{
 
                     "filepath": str,  # Path to the file being modified (full path)
-                    "modification": str,  # New code replacing the original entire line. modified code should strictly not have <Delim-Line-i>
+                    "modification": str,  # New code replacing the original entire line
                     "actual_code": str  # The original code that was replaced entire line.
-                                        return actaul code as you read dont remove DELIMITER
+                                        return actaul code as it isa you read dont remove DELIMITER
                     "start": int,   # Start line number of actual code( return i of first occurance <Delim-line-i> in actual_code)
                     "end": int,     # End line number actual code ( return j of last ocuurance <Delim-line-j> in actual_code)
                 }}

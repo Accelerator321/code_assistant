@@ -130,13 +130,15 @@ def process_folder(folder_path):
 
 
 def apply_changes(response):
+    print("modification tool- ", response)
     res = parse_agent_response(response)
+
     if not res: return
     changes = res.get("changes",[])
     query = res.get("query","")
     changes_by_file = {}
     backup = {}
-
+    print(changes)
     # Grouping changes by file
     for change in changes:
         
@@ -150,7 +152,7 @@ def apply_changes(response):
         if os.path.exists(file):
             with open(file, "r") as f:
                 code = f.read()
-            backup[file] = code
+                backup[file] = code
         else:
             code = ""
             
