@@ -16,7 +16,7 @@ def create_branch(response):
     
     params = parse_agent_response(response)
     branch_name =params.get("branch_name", "code_assistant-accelerator4321")
-    workspace = params.get("workspace","")
+    workspace = params.get("workspace","xyz")
     
     
     check_cmd = f'git -C "{workspace}" branch --list {branch_name}'
@@ -34,7 +34,7 @@ def create_branch(response):
 
 def get_commit_log(response):
     params = parse_agent_response(response)
-    workspace = params.get("workspace","")
+    workspace = params.get("workspace","xyz")
     
     commit_count = params.get("commit_count", "10")  # Default to last 10 commits
     
@@ -46,7 +46,7 @@ def revert_commit(response):
     
     params = parse_agent_response(response)
     
-    workspace = params.get("workspace","")
+    workspace = params.get("workspace","xyz")
     
     commit_hash = params.get("commit_hash", "")
     
@@ -59,8 +59,9 @@ def revert_commit(response):
 def commit_changes(response):
     
     params = parse_agent_response(response)
-    workspace = params.get("workspace","")
-    
+    print(params)
+    workspace = params.get("workspace","xyz")
+   
     commit_message = params.get("commit_message", "No commit message provided")  
     execute(f'git -C "{workspace}" add .')
     cmd = f'git -C "{workspace}" commit -m "{commit_message}"'

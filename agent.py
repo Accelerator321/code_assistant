@@ -58,7 +58,7 @@ After Preaparing changes resonse which is=>
 
 Whenever providing file_path ALways provide full path to filemodifcation tool.
 
-After using_file_modification commit the changes with commit message = query+| +timestamp using git_commit_tool
+After using_file_modification commit the changes with commit message = query using git_commit_tool
 example-> commit message = "query|2025-03-20 17:25"
 
 
