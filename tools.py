@@ -1,21 +1,37 @@
-from db import search_code
+from db import search_code,retrieval_chain
 from langchain.tools import Tool
-from utils.utils import apply_changes
+from utils.utils import apply_changes, read_file
 from utils.run_command import run_command
 from utils.git_utils import *
 
 
+read_file_tool = Tool(
+    name="read_file_tool",
+    func=read_file,
+    description="Reads the file and retunr its content. provide it the path of file."
+)
 def user_input(text):
     print(text, end="-> ")
     inp = input()
     return inp
 
+# search_tool = Tool(
+#     name="search_code",
+#     func=search_code,
+#     description="""Retrieves relevant code chunks based on the query.
+#         Provide:
+#         "query" :str #query for seraching code
+#         "k": str number of chunks to find default value is 10
+#     """
+# )
+
 search_tool = Tool(
     name="search_code",
-    func=search_code,
-    description="Retrieves relevant code chunks based on the query.",
+    func=retrieval_chain.run,
+    description="""Retrieves relevant code chunks based on the query. Its a retreival chain.
+        
+    """
 )
-
 
 
 user_input_tool = Tool(
@@ -29,24 +45,19 @@ file_modification_tool = Tool(
     func=apply_changes,
     description="""Applies code changes to user files.Necessary to ask user consent before applying.
     Never apply chnages without user consent
-    Input format
-    ```json
-        {{
-            "changes": [
-                {{
+    provide:
+    
 
+           
                     "filepath": str,  # Path to the file being modified (full path)
-                    "modification": str,  # New code replacing the original entire line
+                    "modification": str,  # New code 
                     "actual_code": str  # The original code that was replaced entire line.
                                         return actaul code as it isa you read dont remove DELIMITER
-                    "start": int,   # Start line number of actual code( return i of first occurance <Delim-line-i> in actual_code)
+                    "start"
+                    : int,   # Start line number of actual code( return i of first occurance <Delim-line-i> in actual_code)
                     "end": int,     # End line number actual code ( return j of last ocuurance <Delim-line-j> in actual_code)
-                }}
-                }}
-                "query": "initial user query"
-            ]
-        }}
-        commit the chnages after using this tool. Commit mesage will be initial userQuery+|+timestamp
+                "query":str # initial user query
+
     """
 )
 
@@ -67,7 +78,7 @@ git_log_tool = Tool(
     func=get_commit_log,
     description="""
     Use this tool to retrieve commit logs from a Git repository.
-    providyese params:
+    provid params:
         "workspace": str #workspace path given in user query
         "limit": int  # Number of commits to retrieve (default is 10)
     

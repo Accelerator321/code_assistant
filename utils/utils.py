@@ -114,10 +114,13 @@ def process_folder(folder_path):
                 embedding = get_embedding(chunk["text"])
 
                 
-                
-                add_to_db(embedding,{
+                # add_to_db(embedding,{
+                #                 "file_path": chunk["file_path"],
+                #                 # "chunk_text": chunk["text"]
+                #             })
+                add_to_db(chunk["text"],{
                                 "file_path": chunk["file_path"],
-                                "chunk_text": chunk["text"]
+                                # "chunk_text": chunk["text"]
                             })
 
             print(f"✅ Processed {file_path}: {len(chunks)} chunks")
@@ -128,50 +131,26 @@ def process_folder(folder_path):
 
 
 
-
 def apply_changes(response):
     print("modification tool- ", response)
     res = parse_agent_response(response)
 
-    if not res: return
-    changes = res.get("changes",[])
+    if not res: return "params not captured theres is something wrong with paramer ensure its is a json object"
+    
     query = res.get("query","")
-    changes_by_file = {}
+    
     backup = {}
-    print(changes)
-    # Grouping changes by file
-    for change in changes:
+    file_path = res.get("filepath","")
+
+    if not file_path: return "filepath empty or invalid"
+
+    new_code= res.get("modification","")
+    print("\n\n\n\n",new_code)
         
-        changes_by_file.setdefault(change['filepath'], []).append(change)
-
-    # Applying changes to each file
-    for file, file_changes in changes_by_file.items():
-        file_changes.sort(key=lambda x: x['start'])
-
-        
-        if os.path.exists(file):
-            with open(file, "r") as f:
-                code = f.read()
-                backup[file] = code
-        else:
-            code = ""
-            
-
-        code_lines = code.split("\n")
-        new_code = ""
-        start = 0
-
-        
-        for change in file_changes:
-            new_code += "\n".join(code_lines[start:change['start']-1]) + "\n"
-            new_code += change['modification'] + "\n"
-            start = change['end']
-
-        new_code += "\n".join(code_lines[start:])
-
-        
-        with open(file, "w") as f:
-            f.write(new_code)
+    with open(file_path,"r") as f:
+        backup[file_path]=f.read()
+    with open(file_path, "w") as f:
+        f.write(new_code)
 
     
     backup_file = "backup.json"
@@ -192,6 +171,71 @@ def apply_changes(response):
         f.seek(0)
         json.dump(data, f, indent=4)
         f.truncate() 
+    return "Changes applied"
+
+# def apply_changes(response):
+#     print("modification tool- ", response)
+#     res = parse_agent_response(response)
+
+#     if not res: return
+#     changes = res.get("changes",[])
+#     query = res.get("query","")
+#     changes_by_file = {}
+#     backup = {}
+#     print(changes)
+#     # Grouping changes by file
+#     for change in changes:
+        
+#         changes_by_file.setdefault(change['filepath'], []).append(change)
+
+#     # Applying changes to each file
+#     for file, file_changes in changes_by_file.items():
+#         file_changes.sort(key=lambda x: x['start'])
+
+        
+#         if os.path.exists(file):
+#             with open(file, "r") as f:
+#                 code = f.read()
+#                 backup[file] = code
+#         else:
+#             code = ""
+            
+
+#         code_lines = code.split("\n")
+#         new_code = ""
+#         start = 0
+
+        
+#         for change in file_changes:
+#             new_code += "\n".join(code_lines[start:change['start']-1]) + "\n"
+#             new_code += change['modification'] + "\n"
+#             start = change['end']
+
+#         new_code += "\n".join(code_lines[start:])
+
+        
+#         with open(file, "w") as f:
+#             f.write(new_code)
+
+    
+#     backup_file = "backup.json"
+#     if not os.path.exists(backup_file):
+#         with open(backup_file, "w") as f:
+#             json.dump({}, f)
+
+#     with open(backup_file, "r+") as f:
+#         try:
+#             data = json.load(f)
+#         except json.JSONDecodeError:
+#             data = {}
+#     with open(backup_file, "w") as f:
+
+#         stamp = query + " | time-> " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+#         data[stamp] = backup
+
+#         f.seek(0)
+#         json.dump(data, f, indent=4)
+#         f.truncate() 
 
 def refresh_backup(backup_file, folder_path):
     if not os.path.exists(backup_file):
@@ -242,6 +286,11 @@ def get_backup_commits():
     
     return json.dumps(commits)
 
+def read_file(file_path):
+    if not os.path.exists(file_path):
+        return "Incorrect file_path"
+    with open(file_path,"r") as f:
+        return f.read()
 
 def revert_commit(message):
     backup = {}
@@ -269,6 +318,12 @@ def revert_commit(message):
 
     
 if __name__ =="__main__":
-    commit= "comment navbar code | time-> 2025-03-20 16:05:28"
+    backup = {}
+    with open("backup.json") as f:
+        backup= json.load(f)
+    
+
+    
+    commit= list(backup.keys())[-1]
     print(revert_commit(commit))
     # print(revert_commit("change savbar to have black background and apply chnages time-> 2025-03-18 22:29:53"))

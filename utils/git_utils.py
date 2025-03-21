@@ -13,7 +13,11 @@ def execute(command):
 
 
 def create_branch(response):
-    
+    """
+     provide:
+    "workspace": str #workspace path given in user query
+    "branch_name": str #branch to create or visit default ("code_assistant-accelerator4321")"
+    """
     params = parse_agent_response(response)
     branch_name =params.get("branch_name", "code_assistant-accelerator4321")
     workspace = params.get("workspace","xyz")
@@ -59,8 +63,10 @@ def revert_commit(response):
 def commit_changes(response):
     
     params = parse_agent_response(response)
-    print(params)
+    
     workspace = params.get("workspace","xyz")
+
+    if workspace=="xyz": "Could not commit. Something went wrong. Possible error=> If you are providing comment inside json remove comments because it cause parsing errors."
    
     commit_message = params.get("commit_message", "No commit message provided")  
     execute(f'git -C "{workspace}" add .')
