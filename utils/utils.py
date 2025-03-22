@@ -25,6 +25,8 @@ def get_gitignore_patterns(base_path):
     ignored_patterns = set()
     ignored_patterns.add(gitignore_path)
     ignored_patterns.add(git_path)
+    ignored_patterns.add(os.path.join(base_path,"package-lock.json"))
+    
 
     if os.path.exists(gitignore_path):
         with open(gitignore_path, "r", encoding="utf-8") as f:
@@ -41,7 +43,7 @@ def is_ignored(file_path, ignored_patterns):
     return any(file_path.startswith(pattern) for pattern in ignored_patterns)
 
 
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+
 
 
 def get_embedding(text):
@@ -78,7 +80,7 @@ def chunk_code(code, file_path, chunk_size=80, overlap=20):
         chunk_text = code[start:end]
 
         chunks.append({
-            "text": "\n".join(chunk_text),
+            "text":file_path+":\n" + "\n".join(chunk_text),
             "file_path": file_path,
         })
 
@@ -146,7 +148,8 @@ def apply_changes(response):
 
     new_code= res.get("modification","")
     print("\n\n\n\n",new_code)
-        
+    if not os.path.exists(file_path):
+        return "Incorrect file_path"
     with open(file_path,"r") as f:
         backup[file_path]=f.read()
     with open(file_path, "w") as f:
@@ -258,6 +261,7 @@ def refresh_backup(backup_file, folder_path):
 
 
 def parse_agent_response(response):
+    # response = response.replace("\\", "\\\\")
     try:
         params = json.loads(response)
         return params
@@ -286,7 +290,9 @@ def get_backup_commits():
     
     return json.dumps(commits)
 
-def read_file(file_path):
+def read_file(response):
+    params= parse_agent_response(response)
+    file_path= params.get("file_path", "xyz")
     if not os.path.exists(file_path):
         return "Incorrect file_path"
     with open(file_path,"r") as f:

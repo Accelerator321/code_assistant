@@ -78,7 +78,7 @@
 
 
 import os
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS
 from langchain.docstore.document import Document
 from utils.utils import parse_agent_response
 import google.generativeai as genai
@@ -90,7 +90,8 @@ from dotenv import load_dotenv
 from langchain.prompts import PromptTemplate
 
 load_dotenv()
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+api_key= os.getenv('GOOGLE_API_KEY_2')
+llm = ChatGoogleGenerativeAI(model="models/gemini-1.5-flash", temperature=0.3,google_api_key=api_key)
  
 class GeminiEmbeddings(Embeddings):
     """Custom Gemini embeddings wrapper for LangChain."""
@@ -114,7 +115,7 @@ INDEX_PATH = "faiss_index"
 #     vector_store = FAISS.load_local(INDEX_PATH, embeddings)
 # else:
 embeddings = GeminiEmbeddings()
-llm = ChatGoogleGenerativeAI(model="models/gemini-1.5-flash", temperature=0.3)
+
 
 vector_store = FAISS.from_documents([Document(page_content="Ireelevant", metadata={"file_path":"None"})], embeddings)
 

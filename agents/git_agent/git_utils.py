@@ -1,24 +1,27 @@
 import subprocess
-from .utils import parse_agent_response
+from utils.utils import parse_agent_response
 import os
-def execute(command):
+# def execute(command):
   
-    output_file = os.popen(command)
+#     output_file = os.popen(command)
 
-    output = output_file.read()
+#     output = output_file.read()
 
-    output_file.close()
+#     output_file.close()
     
-    return output
+#     return output
+def execute(command):
+    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    stdout, stderr = process.communicate()
+    
+    return stdout.strip() if stdout else stderr.strip() 
 
 
 def create_branch(response):
-    """
-     provide:
-    "workspace": str #workspace path given in user query
-    "branch_name": str #branch to create or visit default ("code_assistant-accelerator4321")"
-    """
+    
+    print(response)
     params = parse_agent_response(response)
+    print("parsed", params)
     branch_name =params.get("branch_name", "code_assistant-accelerator4321")
     workspace = params.get("workspace","xyz")
     
