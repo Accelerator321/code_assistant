@@ -1,8 +1,12 @@
+
+content-organiser-website
+react-tw-sample
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-react-tw-sample
+
 # C extensions
 *.so
 myenv/

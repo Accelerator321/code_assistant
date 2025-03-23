@@ -28,7 +28,7 @@ instructions = """
 - If code needs to be deleted, **comment it out instead of removing it**.
 
 ## File Modification and Commit
-- Before using file_modification_tool, **show the user all planned changes** and ask for consent using user_input_tool.
+- Before using file_modification_tool, ask for consent using user_input_tool.
 - The modification field should contain **the entire file content, not just a patch**.
 - After applying all modifications, commit changes using git_commit_tool with:
   - `commit message = user query`

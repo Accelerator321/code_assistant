@@ -14,10 +14,9 @@ load_dotenv()
 
 
 
-workspace = "D:\\code assistant\\react-tw-sample"
+workspace = "D:/code assistant/react-tw-sample"
 branch_name = "code_assistant-accelerator4321"
 backup_file = "backup.json"
-
 
 
  

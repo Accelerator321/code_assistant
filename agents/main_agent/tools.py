@@ -18,7 +18,7 @@ read_file_tool = Tool(
 
 search_tool = Tool(
     name="search_code",
-    func=retrieval_chain.run,
+    func=lambda q: retrieval_chain.run(q+" Alaways return relevant file_paths with the answer"),
     description="""Retrieves relevant code chunks based on the query. Its a retreival chain.
         
     """

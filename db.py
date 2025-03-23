@@ -138,6 +138,7 @@ def add_to_db(page_content, metadata_entry):
 
 
 
+
 def search_code(response):
     """Search FAISS index for similar code snippets and return as documents."""
     params = parse_agent_response(response)

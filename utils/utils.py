@@ -81,7 +81,7 @@ def chunk_code(code, file_path, chunk_size=80, overlap=20):
 
         chunks.append({
             "text":file_path+":\n" + "\n".join(chunk_text),
-            "file_path": file_path,
+            "file_path": file_path.replace("\\","/"),
         })
 
         start += chunk_size - overlap
@@ -259,12 +259,20 @@ def refresh_backup(backup_file, folder_path):
 
 
 
-
+import json5
 def parse_agent_response(response):
     # response = response.replace("\\", "\\\\")
     try:
-        params = json.loads(response)
-        return params
+        params = json.loads(response,strict= False)
+        if params:
+            return params
+    except Exception as e:
+        pass
+    
+    try:
+        params = json5.loads(response)
+        if params:
+            return params
     except Exception as e:
         pass
     pattern = r'```json\s*([\s\S]*?)\s*```'
@@ -275,10 +283,12 @@ def parse_agent_response(response):
     if match:
         json_content = match.group(1)
         try:
-            parsed_json = json.loads(json_content)
-            ans = parsed_json
+            parsed_json = json.loads(json_content,strict= False)
+            return parsed_json
         except json.JSONDecodeError:
             ans = {}
+    
+
     return ans
 
 
